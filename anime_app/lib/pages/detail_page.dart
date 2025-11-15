@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/anime_model.dart';
 import '../providers/favorite_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   final Anime anime;
@@ -20,24 +18,6 @@ class _DetailPageState extends State<DetailPage> {
     super.initState();
     final fav = Provider.of<FavoriteProvider>(context, listen: false);
     _isFav = fav.isFavorite(widget.anime.malId);
-  }
-
-  Future<void> _openTrailer(String url) async {
-    if (url.isEmpty) return;
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  
-  String _convertEmbedToWatch(String embedUrl) {
-    if (embedUrl.isEmpty) return "";
-
-    
-    final videoId = embedUrl.split('/').last.split('?').first;
-
-    return "https://www.youtube.com/watch?v=$videoId";
   }
 
   @override
@@ -66,10 +46,14 @@ class _DetailPageState extends State<DetailPage> {
               child: Row(
                 children: [
                   Expanded(
-                      child: Text(
-                    widget.anime.title,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  )),
+                    child: Text(
+                      widget.anime.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   IconButton(
                     icon: Icon(
                       _isFav ? Icons.favorite : Icons.favorite_border,
@@ -86,32 +70,21 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
             ListTile(
-                title: const Text('Score'),
-                trailing: Text(widget.anime.score.toString())),
+              title: const Text('Score'),
+              trailing: Text(widget.anime.score.toString()),
+            ),
             ListTile(
-                title: const Text('Status'),
-                trailing: Text(widget.anime.status)),
+              title: const Text('Status'),
+              trailing: Text(widget.anime.status),
+            ),
             Padding(
               padding: const EdgeInsets.all(14),
-              child: Text(widget.anime.synopsis.isEmpty
-                  ? 'No synopsis available.'
-                  : widget.anime.synopsis),
-            ),
-
-          
-            if (widget.anime.trailerUrl.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    final watchUrl =
-                        _convertEmbedToWatch(widget.anime.trailerUrl);
-                    _openTrailer(watchUrl);
-                  },
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('Watch Trailer'),
-                ),
+              child: Text(
+                widget.anime.synopsis.isEmpty
+                    ? 'No synopsis available.'
+                    : widget.anime.synopsis,
               ),
+            ),
 
             const SizedBox(height: 30),
           ],
